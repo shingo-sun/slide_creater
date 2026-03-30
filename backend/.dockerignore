@@ -1,0 +1,16 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+.env
+venv
+.venv
+*.md
+tests
+.pytest_cache
+outputs/*
+uploads/*
+!outputs/.gitkeep
+!uploads/.gitkeep
+models/
