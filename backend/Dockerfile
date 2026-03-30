@@ -2,14 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# システム依存関係インストール
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    poppler-utils \
-    tesseract-ocr \
-    tesseract-ocr-jpn \
-    && rm -rf /var/lib/apt/lists/*
+# システム依存関係インストール（不要なものは削除済み）
 
 # Python依存関係インストール
 COPY requirements.txt .
