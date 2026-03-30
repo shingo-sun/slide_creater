@@ -2,7 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# システム依存関係インストール（不要なものは削除済み）
+# OpenCV依存パッケージのインストール
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
 
 # Python依存関係インストール
 COPY requirements.txt .
