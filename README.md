@@ -1,33 +1,25 @@
-# Slide Creater
+# Slide Creater - Magic Layers
 
-画像忠実再現型 PowerPoint再構成AIシステム
+画像をレイヤーに分解し、編集可能なPPTXを生成するAIシステム
 
 ## 概要
 
-Google AI Studio等で生成されたスライド画像を、PowerPoint上で編集可能なオブジェクトとして高忠実度に再構成するシステムです。
+画像をClaude Vision APIで解析し、各要素（テキスト、図形、アイコン等）を個別の編集可能なレイヤーとして分解します。分解されたレイヤーからPowerPointを生成でき、Google Slideで開いて編集することができます。
 
 ## 機能
 
-### MVP機能
-- ✅ 画像1枚からPPTX1枚生成
-- ✅ 日本語OCR対応（Google Cloud Vision API）
-- ✅ 長方形、円、線、矢印の図形検出・再構成
-- ✅ テキストボックス編集可能
-- ✅ アイコン切出し独立配置
-- ✅ 元画像との比較表示
-- ✅ 忠実再現モード搭載
-
-### 変換モード
-1. **忠実再現モード**: 元画像の再現を最優先
-2. **編集優先モード**: 編集可能性を重視
-3. **ハイブリッドモード**: バランス重視
+- ✨ **Magic Layers**: 画像を編集可能なレイヤーに自動分解
+- 📝 テキスト要素 → 編集可能なテキストボックス
+- 🔷 図形（四角、線など）→ PowerPointネイティブシェイプ
+- 🎨 画像/アイコン → 透過PNG画像として配置
+- 📤 ワンクリックでPPTXダウンロード & Google Driveを開く
 
 ## セットアップ
 
 ### 必要条件
 - Python 3.10+
 - Node.js 18+
-- (オプション) Google Cloud Vision API認証情報
+- Anthropic API Key (Claude)
 
 ### バックエンド
 
@@ -38,18 +30,13 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-#### Google Cloud Vision APIの設定（オプション）
+#### 環境変数の設定
 
-1. Google Cloud Consoleでプロジェクトを作成
-2. Cloud Vision APIを有効化
-3. サービスアカウントキーを作成してダウンロード
-4. 環境変数を設定:
+`.env`ファイルを作成:
 
 ```bash
-export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account-key.json"
+ANTHROPIC_API_KEY=your_api_key_here
 ```
-
-※ Cloud Vision APIが設定されていない場合、フォールバックモード（テキスト領域検出のみ）で動作します。
 
 ### フロントエンド
 
@@ -73,7 +60,7 @@ cd frontend
 npm run dev
 ```
 
-ブラウザで http://localhost:3000 にアクセス
+ブラウザで http://localhost:5173 にアクセス
 
 ### 一括起動スクリプト
 
@@ -88,22 +75,11 @@ npm run dev
 | Method | Path | 説明 |
 |--------|------|------|
 | POST | `/api/upload` | 画像アップロード |
-| POST | `/api/analyze/{file_id}` | 画像解析 |
-| POST | `/api/generate/{file_id}` | PPTX生成 |
-| GET | `/api/download/{file_id}` | PPTXダウンロード |
-| GET | `/api/compare/{file_id}` | 比較情報取得 |
-| DELETE | `/api/cleanup/{file_id}` | 一時ファイル削除 |
-
-### パラメータ
-
-**変換モード** (`mode`)
-- `faithful`: 忠実再現モード
-- `editable`: 編集優先モード
-- `hybrid`: ハイブリッドモード
-
-**スライドサイズ** (`slide_ratio`)
-- `16:9`: ワイド
-- `4:3`: 標準
+| POST | `/api/decompose/{file_id}` | 画像をレイヤーに分解 |
+| GET | `/api/layers/{file_id}` | 分解済みレイヤー情報取得 |
+| DELETE | `/api/layers/{file_id}` | レイヤーデータ削除 |
+| POST | `/api/layers/{file_id}/pptx` | レイヤーからPPTX生成 |
+| GET | `/api/layers/{file_id}/download` | PPTXダウンロード |
 
 ## プロジェクト構造
 
@@ -112,16 +88,10 @@ slide_creater/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py              # FastAPI アプリケーション
-│   │   ├── models/
-│   │   │   └── slide_objects.py # データモデル
 │   │   └── services/
-│   │       ├── image_analyzer.py  # 画像前処理
-│   │       ├── ocr_service.py     # OCR処理
-│   │       ├── shape_detector.py  # 図形検出
-│   │       ├── layout_analyzer.py # レイアウト解析
-│   │       └── pptx_generator.py  # PPTX生成
+│   │       └── layer_decomposer.py # Claude Vision APIによるレイヤー分解
 │   ├── uploads/                 # アップロード画像
-│   ├── outputs/                 # 生成PPTX
+│   ├── outputs/                 # 生成PPTX・レイヤー画像
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
@@ -133,13 +103,13 @@ slide_creater/
 └── README.md
 ```
 
-## 品質目標
+## 技術スタック
 
-- 主要テキスト認識精度：90%以上
-- 主要レイアウト一致率：90%以上
-- 基本図形再現率：85%以上
-- 編集可能オブジェクト率：80%以上
-- 手動再作成工数削減率：70%以上
+- **バックエンド**: FastAPI, Python 3.10+
+- **フロントエンド**: React, TypeScript, Vite
+- **AI**: Claude Vision API (Anthropic)
+- **PPTX生成**: python-pptx
+- **画像処理**: OpenCV, Pillow
 
 ## ライセンス
 
