@@ -4,9 +4,9 @@ import axios from 'axios';
 
 // 本番環境用API URL設定
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-const api = axios.create({
-  baseURL: API_BASE_URL,
-});
+// const api = axios.create({
+//   baseURL: API_BASE_URL,
+// });
 
 // アプリモードの型
 type AppMode = 'pptx' | 'layers';
