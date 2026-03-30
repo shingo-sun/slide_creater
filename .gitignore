@@ -29,3 +29,4 @@ backend/uploads/*
 !backend/uploads/.gitkeep
 backend/outputs/*
 !backend/outputs/.gitkeep
+backend/models/sam_vit_b_01ec64.pth
