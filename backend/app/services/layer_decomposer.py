@@ -710,6 +710,7 @@ class LayerDecomposer:
         original_height: int,
         background_color: Optional[str],
         metadata_path: Path
+    )
                 try:
                     result = response.json()
                     content = result["content"][0]["text"]
