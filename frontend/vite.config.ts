@@ -21,4 +21,8 @@ export default defineConfig({
       },
     },
   },
+  define: {
+    // 本番ビルド時に VITE_API_URL が未設定の場合は空文字（同一オリジン）
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || ''),
+  },
 })

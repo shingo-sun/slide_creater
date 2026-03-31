@@ -3,10 +3,10 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 
 // 本番環境用API URL設定
-// const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-// const api = axios.create({
-//   baseURL: API_BASE_URL,
-// });
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const api = axios.create({
+  baseURL: API_BASE_URL,
+});
 
 // アプリモードの型
 type AppMode = 'pptx' | 'layers';
@@ -165,7 +165,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/upload', formData, {
+      const response = await api.post('/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       
@@ -202,7 +202,7 @@ function App() {
     setError(null);
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/full-pipeline/${currentFileId}?max_iterations=${maxIterations}&target_similarity=${targetSimilarity / 100}`
       );
 
@@ -258,20 +258,20 @@ function App() {
 
     try {
       // Step 1: レイヤー分解
-      const response = await axios.post<DecomposeResult>(
+      const response = await api.post<DecomposeResult>(
         `/api/decompose/${currentFileId}`
       );
 
       const result = response.data;
-      
+
       // Step 2: PPTX自動生成
       setCurrentStep('PPTXを生成中...');
       try {
-        const pptxResponse = await axios.post<{ download_url: string }>(
+        const pptxResponse = await api.post<{ download_url: string }>(
           `/api/layers/${currentFileId}/pptx`
         );
-        result.pptx_url = pptxResponse.data.download_url;
-        
+        result.pptx_url = API_BASE_URL + pptxResponse.data.download_url;
+
         // Step 3: 自動ダウンロード
         if (result.pptx_url) {
           setCurrentStep('PPTXをダウンロード中...');
