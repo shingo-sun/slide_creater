@@ -711,16 +711,16 @@ class LayerDecomposer:
         background_color: Optional[str],
         metadata_path: Path
     ):
-            """分解結果のメタデータを保存"""
-            metadata = {
-                "layers": [asdict(layer) for layer in layers],
-                "original_width": original_width,
-                "original_height": original_height,
-                "background_color": background_color
-            }
-            with open(metadata_path, "w", encoding="utf-8") as f:
-                json.dump(metadata, f, ensure_ascii=False, indent=2)
-            logger.info(f"メタデータを保存: {metadata_path}")
+        """分解結果のメタデータを保存"""
+        metadata = {
+            "layers": [asdict(layer) for layer in layers],
+            "original_width": original_width,
+            "original_height": original_height,
+            "background_color": background_color
+        }
+        with open(metadata_path, "w", encoding="utf-8") as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
+        logger.info(f"メタデータを保存: {metadata_path}")
         
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
