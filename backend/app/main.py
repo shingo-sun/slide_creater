@@ -1,3 +1,5 @@
+import logging
+logging.basicConfig(level=logging.INFO)
 """
 Slide Creater - Magic Layers API
 画像をレイヤーに分解し、編集可能なPPTXを生成
