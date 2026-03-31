@@ -704,13 +704,13 @@ class LayerDecomposer:
         return f"#{bg_color[2]:02x}{bg_color[1]:02x}{bg_color[0]:02x}"
     
     def _save_metadata(
-        self, 
+        self,
         layers: List[LayerElement],
         original_width: int,
         original_height: int,
         background_color: Optional[str],
         metadata_path: Path
-    )
+    ):
             """分解結果のメタデータを保存"""
             metadata = {
                 "layers": [asdict(layer) for layer in layers],
