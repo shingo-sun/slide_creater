@@ -711,22 +711,16 @@ class LayerDecomposer:
         background_color: Optional[str],
         metadata_path: Path
     )
-                try:
-                    result = response.json()
-                    content = result["content"][0]["text"]
-                except Exception as e:
-                    logger.error(f"Claude API レスポンスJSON解析エラー: {e}")
-                    logger.error(f"Status: {response.status_code}")
-                    logger.error(f"Headers: {response.headers}")
-                    logger.error(f"Text: {response.text}")
-                    return []
-                try:
-                    # JSONを抽出
-                    return self._parse_elements_response(content)
-                except Exception as e:
-                    logger.error(f"_parse_elements_responseでエラー: {e}")
-                    logger.error(f"content: {content}")
-                    return []
+            """分解結果のメタデータを保存"""
+            metadata = {
+                "layers": [asdict(layer) for layer in layers],
+                "original_width": original_width,
+                "original_height": original_height,
+                "background_color": background_color
+            }
+            with open(metadata_path, "w", encoding="utf-8") as f:
+                json.dump(metadata, f, ensure_ascii=False, indent=2)
+            logger.info(f"メタデータを保存: {metadata_path}")
         
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
